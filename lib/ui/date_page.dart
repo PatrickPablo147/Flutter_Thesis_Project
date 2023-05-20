@@ -154,7 +154,7 @@ class _DatePageState extends State<DatePage> {
               clr: Colors.red[300]!,
               context: context,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _bottomSheetButton(
@@ -166,7 +166,7 @@ class _DatePageState extends State<DatePage> {
               isClose: true,
               context: context,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
           ],
