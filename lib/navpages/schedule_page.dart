@@ -8,22 +8,20 @@ import 'package:intl/intl.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/services/notification_services.dart';
 import 'package:project1/services/theme_services.dart';
-import 'package:project1/ui/add_task_bar.dart';
-import 'package:project1/ui/theme.dart';
-import 'package:project1/ui/widgets/button.dart';
+import 'package:project1/models/add_task_model.dart';
+import 'package:project1/ui/theme/theme.dart';
 import 'package:project1/ui/widgets/task_tile.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../models/task.dart';
 
-class DatePage extends StatefulWidget {
-  const DatePage({Key? key}) : super(key: key);
+class SchedulePage extends StatefulWidget {
+  const SchedulePage({Key? key}) : super(key: key);
 
   @override
-  State<DatePage> createState() => _DatePageState();
+  State<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _DatePageState extends State<DatePage> {
+class _SchedulePageState extends State<SchedulePage> {
   /*
   * Variables for Time, Task Controller and Notification
   * */
@@ -42,8 +40,7 @@ class _DatePageState extends State<DatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
-      backgroundColor: context.theme.backgroundColor,
+      //appBar: _appBar(),
       body: Column(
         children: [
           _addTaskBar(),
@@ -121,7 +118,10 @@ class _DatePageState extends State<DatePage> {
         MediaQuery.of(context).size.height*0.24:
         MediaQuery.of(context).size.height*0.32,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(40),
+            topRight: Radius.circular(40)
+          ),
           color: Get.isDarkMode?darkGreyClr:Colors.white,
         ),
         child: Column(
@@ -207,26 +207,27 @@ class _DatePageState extends State<DatePage> {
   //Controls the Horizontal Date Picker
   _addDateBar() {
     return Container(
+      alignment: Alignment.center,
       margin: const EdgeInsets.only(top: 20, left: 20),
       child: DatePicker(
         DateTime.now(),
-        height: 100,
+        height: 120,
         width: 80,
-        initialSelectedDate: DateTime.now(),
-        selectionColor: primaryClr,
+        initialSelectedDate: _selectedDate,
+        selectionColor: Colors.blue.shade800,
         selectedTextColor: Colors.white,
         dateTextStyle: GoogleFonts.lato(
             textStyle: TextStyle(
-                fontSize: 20,
+                fontSize: 40,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey
+                color: Colors.grey,
             )
         ),
         dayTextStyle: GoogleFonts.lato(
             textStyle: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey
+                color: Colors.grey,
             )
         ),
         monthTextStyle: GoogleFonts.lato(
@@ -247,33 +248,41 @@ class _DatePageState extends State<DatePage> {
   //Button that Call the AddTask Page
   _addTaskBar(){
     return  Container(
+      //padding: EdgeInsets.only(top: 60, left: 20),
       margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(DateFormat.yMMMMd().format(DateTime.now()),
-                  style: subHeadingStyle,
-                ) ,
-                Text("Today",
-                  style: headingStyle,
-                )
-              ],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(DateFormat.yMMMMd().format(_selectedDate),
+                style: subHeadingStyle,
+              ) ,
+              // Text("Today",
+              //   style: headingStyle,
+              // )
+            ],
           ),
-          MyButton(
-              label: "+ Add Task",
-              onTap: () async {
-                await Navigator.push(
-                   context,
-                   MaterialPageRoute(builder: (context) => AddTaskPage())
-                );
-                _taskController.getTasks();
-              }
-          )
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade800,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25)
+            ),
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddTaskModel())
+              );
+              _taskController.getTasks();
+            },
+            child: const Text('+ Add Task'),
+          ),
         ],
       ),
     );

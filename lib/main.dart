@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:project1/database/db_helper.dart';
 import 'package:project1/services/theme_services.dart';
-import 'package:project1/ui/date_page.dart';
-import 'package:project1/ui/theme.dart';
-
-import 'navpages/main_page.dart';
+import 'package:project1/ui/theme/theme.dart';
+import 'controllers/navbar_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
       darkTheme: Themes.dark,
       themeMode: ThemeService().theme,
 
-      home: MainPage(),
+      home: const NavbarRoots(),
     );
   }
 }

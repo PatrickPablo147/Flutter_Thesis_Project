@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../theme.dart';
+import '../theme/theme.dart';
 
 class MyInputField extends StatelessWidget {
   final String title;

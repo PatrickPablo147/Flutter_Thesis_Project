@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project1/ui/theme.dart';
+import 'package:project1/ui/theme/theme.dart';
 
 class MyButton extends StatelessWidget {
   final String label;

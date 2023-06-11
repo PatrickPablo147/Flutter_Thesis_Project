@@ -8,7 +8,7 @@ const Color pinkClr = Color(0xFFff4667);
 const Color white = Colors.white;
 const primaryClr = bluishClr;
 const Color darkGreyClr = Color(0xFF121212);
-Color darkHeaderClr = Color(0xFF424242);
+Color darkHeaderClr = const Color(0xFF424242);
 
 
 class Themes {
@@ -47,9 +47,9 @@ TextStyle get headingStyle {
 }
 
 TextStyle get titleStyle {
-  return GoogleFonts.lato (
+  return GoogleFonts.poppins (
       textStyle: TextStyle(
-          fontSize: 16,
+          fontSize: 30,
           fontWeight: FontWeight.w400,
           color: Get.isDarkMode?Colors.white:Colors.black
       )
@@ -57,11 +57,11 @@ TextStyle get titleStyle {
 }
 
 TextStyle get subTitleStyle {
-  return GoogleFonts.lato (
+  return GoogleFonts.poppins (
       textStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Get.isDarkMode? Colors.grey[100]:Colors.grey[400]
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Get.isDarkMode? Colors.white:Colors.black
       )
   );
 }
