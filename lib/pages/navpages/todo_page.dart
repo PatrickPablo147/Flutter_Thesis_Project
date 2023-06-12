@@ -29,7 +29,7 @@ class _TodoPageState extends State<TodoPage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              "List of Task",
+              "Todo List",
               style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w500

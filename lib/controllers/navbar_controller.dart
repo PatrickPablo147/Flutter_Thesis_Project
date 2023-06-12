@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project1/navpages/settings_page.dart';
-import 'package:project1/navpages/todo_page.dart';
-import 'package:project1/navpages/schedule_page.dart';
 import 'package:project1/services/notification_services.dart';
 
+import '../pages/navpages/schedule_page.dart';
+import '../pages/navpages/todo_page.dart';
 import '../services/theme_services.dart';
 
 class NavbarRoots extends StatefulWidget {
@@ -19,8 +18,8 @@ class _NavbarRootsState extends State<NavbarRoots> {
   int _index = 0;
   final _screens = [
     //MainPage(),
-    SchedulePage(),
-    TodoPage(),
+    const SchedulePage(),
+    const TodoPage(),
     Container()
   ];
   var notifyHelper;
@@ -39,7 +38,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
       appBar: _appBar(),
       backgroundColor: Colors.white,
       body: _screens[_index],
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 70,
         child: BottomNavigationBar(
           backgroundColor: Colors.white,
@@ -61,7 +60,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
             //BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Schedule"),
             BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Todo"),
-            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ],
 
 
@@ -90,7 +89,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
       actions: [
         CircleAvatar(
           backgroundImage: AssetImage(
-              "images/user.png"
+              "assets/images/user.png"
           ),
         ),
         SizedBox(width: 20,),

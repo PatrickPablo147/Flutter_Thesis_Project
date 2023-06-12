@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../controllers/task_controller.dart';
-import '../models/task.dart';
-import '../ui/widgets/task_tile.dart';
+import '../../controllers/task_controller.dart';
+import '../../models/task.dart';
+import '../../ui/widgets/task_tile.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -24,10 +24,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         children: [
           //menu text
           Container(
-            padding: EdgeInsets.only(top: 70, left: 20),
+            padding: const EdgeInsets.only(top: 70, left: 20),
             child: Row(
               children: [
-                Icon(Icons.menu, size: 30, color: Colors.black54,),
+                const Icon(Icons.menu, size: 30, color: Colors.black54,),
                 Expanded(child: Container()),
                 Container(
                   margin: EdgeInsets.only(right: 20),
@@ -40,20 +40,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          SizedBox(height: 30,),
+          const SizedBox(height: 30,),
           //Discover Text
           Container(
             margin: EdgeInsets.only(left: 20),
             //child: AppLargeText(text: "Plan Ahead"),
           ),
-          SizedBox(height: 30,),
+          const SizedBox(height: 30,),
           //tab bar
           Container(
             child: Align(
               alignment: Alignment.centerLeft,
               child: TabBar(
                 controller: _tabController,
-                labelPadding: EdgeInsets.only(left: 20, right: 20),
+                labelPadding: const EdgeInsets.only(left: 20, right: 20),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 isScrollable: true,

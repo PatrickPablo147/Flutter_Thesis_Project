@@ -12,7 +12,7 @@ import 'package:project1/models/add_task_model.dart';
 import 'package:project1/ui/theme/theme.dart';
 import 'package:project1/ui/widgets/task_tile.dart';
 
-import '../models/task.dart';
+import '../../models/task.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({Key? key}) : super(key: key);
@@ -217,21 +217,21 @@ class _SchedulePageState extends State<SchedulePage> {
         selectionColor: Colors.blue.shade800,
         selectedTextColor: Colors.white,
         dateTextStyle: GoogleFonts.lato(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey,
             )
         ),
         dayTextStyle: GoogleFonts.lato(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey,
             )
         ),
         monthTextStyle: GoogleFonts.lato(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey
@@ -306,7 +306,7 @@ class _SchedulePageState extends State<SchedulePage> {
         size: 20,
         color: Get.isDarkMode ? Colors.white:Colors.black),
       ),
-      actions: [
+      actions: const [
         CircleAvatar(
           backgroundImage: AssetImage(
             "images/user.png"
