@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project1/services/notification_services.dart';
-
 import '../pages/navpages/schedule_page.dart';
 import '../pages/navpages/todo_page.dart';
 import '../services/theme_services.dart';
@@ -17,7 +15,6 @@ class NavbarRoots extends StatefulWidget {
 class _NavbarRootsState extends State<NavbarRoots> {
   int _index = 0;
   final _screens = [
-    //MainPage(),
     const SchedulePage(),
     const TodoPage(),
     Container()
@@ -44,7 +41,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: false,
-          selectedItemColor: const Color(0xFF7165D6),
+          selectedItemColor: Colors.blueAccent,
           unselectedItemColor: Colors.black26,
           selectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -57,7 +54,6 @@ class _NavbarRootsState extends State<NavbarRoots> {
             });
           },
           items: const [
-            //BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Schedule"),
             BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Todo"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
@@ -86,10 +82,10 @@ class _NavbarRootsState extends State<NavbarRoots> {
             size: 20,
             color: Get.isDarkMode ? Colors.white:Colors.black),
       ),
-      actions: [
+      actions: const [
         CircleAvatar(
           backgroundImage: AssetImage(
-              "assets/images/user.png"
+              "assets/icons/img.png",
           ),
         ),
         SizedBox(width: 20,),

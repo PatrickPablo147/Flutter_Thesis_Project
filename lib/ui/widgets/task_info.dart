@@ -14,18 +14,18 @@ class TaskInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 5),
-      //height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                spreadRadius: 2
-            )
-          ]
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            spreadRadius: 2
+          )
+        ]
       ),
       child: Column(
         children: [
@@ -71,14 +71,14 @@ class TaskInfo extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.access_time_filled,
                       color: Colors.black54,
                     ),
                     const SizedBox(width: 5),
                     Text(
                       "${task!.startTime} - ${task!.endTime}",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black54
                       ),
                     )

@@ -1,18 +1,16 @@
 /*This Class Manage the DatePage*/
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/services/notification_services.dart';
-import 'package:project1/services/theme_services.dart';
 import 'package:project1/models/add_task_model.dart';
 import 'package:project1/ui/theme/theme.dart';
-import 'package:project1/ui/widgets/task_tile.dart';
-
 import '../../models/task.dart';
+import '../../ui/widgets/task_widget.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({Key? key}) : super(key: key);
@@ -28,6 +26,7 @@ class _SchedulePageState extends State<SchedulePage> {
   DateTime _selectedDate = DateTime.now();
   final _taskController = Get.put(TaskController());
   var notifyHelper;
+  //late DateTime targetMonth = DateTime(_selectedDate.year, _selectedDate.month * 1, _selectedDate.day * 1);
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: _appBar(),
+      //appBar: appBar(context, notifyHelper),
       body: Column(
         children: [
           _addTaskBar(),
@@ -52,8 +51,47 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  //Custom Function
-  //Controls that check the repeat before Sending the Data from database
+  bool _isRecurringMonthlyTask(Task task, DateTime taskDate) {
+    DateTime currentDate = DateTime(_selectedDate.year, _selectedDate.month, taskDate.day);
+
+    if (currentDate.isBefore(_selectedDate)) {
+      currentDate = currentDate.add(const Duration(days: 30));
+    }
+    return currentDate.isAtSameMomentAs(_selectedDate);
+  }
+
+  bool _isRecurringWeeklyTask(Task task, DateTime taskDate) {
+    DateTime currentDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+
+    if (currentDate.isAfter(taskDate)) {
+      int differenceInDays = currentDate.difference(taskDate).inDays;
+      int weeksToAdd = (differenceInDays / 7).ceil();
+      currentDate = taskDate.add(Duration(days: weeksToAdd * 7));
+    }
+
+    return currentDate.isAtSameMomentAs(_selectedDate);
+  }
+
+  //Get Date From User ->> Pop up Date Picker
+  _getDateFromUser() async {
+    DateTime? pickerDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2010),
+        lastDate: DateTime(2121)
+    );
+    if (pickerDate!=null){
+      setState(() {
+        _selectedDate = pickerDate;
+      });
+    }
+    else {
+      print("it's null or somethings is wrong");
+    }
+  }
+
+  /*Custom Functions*/
+  //Show the created Task
   _showTasks(){
     _taskController.getTasks();
     return Expanded(
@@ -63,43 +101,58 @@ class _SchedulePageState extends State<SchedulePage> {
           itemBuilder: (_, index){
             Task task = _taskController.taskList[index];
             //print(task.toJson());
-            if(task.repeat == 'Daily') {
-              return AnimationConfiguration.staggeredList(
-                  position: index,
-                  child: SlideAnimation(
-                    child: FadeInAnimation(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _showBottomSheet(context, task);
-                            },
-                            child: TaskTile(task),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-              );
+            DateTime dateFormatted = DateFormat.yMd().parse(task.date!);
+            //Condition to show the Task
+            if (task.isCompleted == 0) {
+              switch (task.repeat){
+                case 'Daily': {
+                  if(dateFormatted.isBefore(_selectedDate)){
+                    return buildTaskWidget(context, task, index, _taskController);
+                  }
+                } break;
+                case 'Weekly': {
+                  if (_isRecurringWeeklyTask(task, dateFormatted)) {
+                    return buildTaskWidget(context, task, index, _taskController);
+                  }
+                } break;
+                case 'Monthly': {
+                  if (_isRecurringMonthlyTask(task, dateFormatted)) {
+                    return buildTaskWidget(context, task, index, _taskController);
+                  }
+                }break;
+                case 'None': {
+                  if(task.date == DateFormat.yMd().format(_selectedDate)){
+                    return buildTaskWidget(context, task, index, _taskController);
+                  }
+                }break;
+                default: {
+                  return Container();
+                }
+              // if(task.repeat == 'Daily') {
+              //   if(dateFormatted.isBefore(_selectedDate)){
+              //     return buildTaskWidget(context, task, index, _taskController);
+              //   }
+              // }
+              // else if (task.repeat == 'Weekly') {
+              //   if (_isRecurringWeeklyTask(task, dateFormatted)) {
+              //     return buildTaskWidget(context, task, index, _taskController);
+              //   }
+              // }
+              // else if (task.repeat == 'Monthly') {
+              //   if (_isRecurringMonthlyTask(task, dateFormatted)) {
+              //     return buildTaskWidget(context, task, index, _taskController);
+              //   }
+              // }
+              // if(task.date == DateFormat.yMd().format(_selectedDate)){
+              //   return buildTaskWidget(context, task, index, _taskController);
+              // }
+              // else {
+              //   return Container();
+              //{
+              }
             }
             if(task.date == DateFormat.yMd().format(_selectedDate)){
-              return AnimationConfiguration.staggeredList(
-                  position: index,
-                  child: SlideAnimation(
-                    child: FadeInAnimation(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _showBottomSheet(context, task);
-                            },
-                            child: TaskTile(task),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-              );
+              return buildTaskWidget(context, task, index, _taskController);
             }
             else {
               return Container();
@@ -109,108 +162,67 @@ class _SchedulePageState extends State<SchedulePage> {
       }),
     );
   }
-  //Controls the Completion and Deletion of Data
-  _showBottomSheet(BuildContext context, Task task) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.only(top: 4),
-        height: task.isCompleted == 1?
-        MediaQuery.of(context).size.height*0.24:
-        MediaQuery.of(context).size.height*0.32,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40)
-          ),
-          color: Get.isDarkMode?darkGreyClr:Colors.white,
-        ),
-        child: Column(
-          children: [
-            Container(
-              height: 6,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Get.isDarkMode?Colors.grey[600]:Colors.grey[300]
+  //Date Text and Add Task Button
+  _addTaskBar(){
+    return  Container(
+      //padding: EdgeInsets.only(top: 60, left: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(DateFormat.yMMMMd().format(_selectedDate),
+                  style: subHeadingStyle
               ),
-            ),
-            const Spacer(),
-            task.isCompleted==1
-            ?Container() : _bottomSheetButton(
-              lable: "Task Completed",
-              onTap: (){
-                _taskController.markTaskCompleted(task.id!);
-                Get.back();
+              const Gap(12),
+              GestureDetector(
+                onTap: () {
+                  _getDateFromUser();
                 },
-              clr: primaryClr,
-              context: context,
-            ),
-            _bottomSheetButton(
-              lable: "Delete Task",
-              onTap: (){
-                _taskController.delete(task);
-                Get.back();
-              },
-              clr: Colors.red[300]!,
-              context: context,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            _bottomSheetButton(
-              lable: "Close",
-              onTap: (){
-                Get.back();
-              },
-              clr: Colors.red[300]!,
-              isClose: true,
-              context: context,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
-      )
-    );
-  }
-  //snackBar Button
-  _bottomSheetButton({required String lable,
-    required Function()? onTap,
-    required Color clr,
-    bool isClose = false,
-    required BuildContext context
-  }){
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        height: 55,
-        width: MediaQuery.of(context).size.width*0.9,
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 2,
-            color: isClose==true?Get.isDarkMode?Colors.grey[600]!:Colors.grey[300]!:clr
+                child: const Icon(
+                  Icons.arrow_drop_down,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              )
+              // Text("Today",
+              //   style: headingStyle,
+              // )
+            ],
           ),
-          borderRadius: BorderRadius.circular(20),
-          color: isClose==true?Colors.transparent:clr,
-        ),
-        child: Center(
-          child: Text(
-            lable,
-            style: isClose?titleStyle:titleStyle.copyWith(color: Colors.white),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade800,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25)
+            ),
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddTaskModel())
+              );
+              _taskController.getTasks();
+            },
+            child: const Text('+ Add Task'),
           ),
-        ),
+        ],
       ),
     );
   }
-  //Controls the Horizontal Date Picker
+  //Horizontal Date Picker
   _addDateBar() {
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.only(top: 20, left: 20),
-      child: DatePicker(
-        DateTime.now(),
+        child: DatePicker(
+        _selectedDate.isBefore(DateTime.now())
+            ?_selectedDate
+            : DateTime.now(),
         height: 120,
         width: 80,
         initialSelectedDate: _selectedDate,
@@ -242,79 +254,8 @@ class _SchedulePageState extends State<SchedulePage> {
             _selectedDate = date;
           });
         },
-      ),
-    );
-  }
-  //Button that Call the AddTask Page
-  _addTaskBar(){
-    return  Container(
-      //padding: EdgeInsets.only(top: 60, left: 20),
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(DateFormat.yMMMMd().format(_selectedDate),
-                style: subHeadingStyle,
-              ) ,
-              // Text("Today",
-              //   style: headingStyle,
-              // )
-            ],
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade800,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25)
-            ),
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddTaskModel())
-              );
-              _taskController.getTasks();
-            },
-            child: const Text('+ Add Task'),
-          ),
-        ],
-      ),
-    );
-  }
-  //Header: Profile and Theme Change
-  _appBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.backgroundColor,
-      leading: GestureDetector(
-        onTap: (){
-          ThemeService().switchTheme();
-          notifyHelper.displayNotification(
-            title: "Theme Changed",
-            body: Get.isDarkMode?"Activated Light Theme":"Activated Dark Theme"
-          );
 
-          notifyHelper.scheduledNotification();
-        },
-        child: Icon(Get.isDarkMode ? Icons.wb_sunny_outlined:Icons.nightlight_round,
-        size: 20,
-        color: Get.isDarkMode ? Colors.white:Colors.black),
       ),
-      actions: const [
-        CircleAvatar(
-          backgroundImage: AssetImage(
-            "images/user.png"
-          ),
-        ),
-        SizedBox(width: 20,),
-      ],
     );
   }
-
 }

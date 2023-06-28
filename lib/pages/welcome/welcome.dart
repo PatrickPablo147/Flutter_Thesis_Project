@@ -44,15 +44,15 @@ class _WelcomeState extends State<Welcome> {
                           1,
                           context,
                           "next",
-                          "First See Learning",
-                          "Forget about a for of paper all knowledge in one learning",
+                          "First See Screen",
+                          "Some text here. Talk something about application",
                           "image path"
                       ),
                       _page(
                           2,
                           context,
                           "next",
-                          "Connect With Everyone",
+                          "Second See Screen",
                           "Always keep in touch with your tutor & friend. Let's get connected!",
                           "image path"
                       ),
@@ -60,7 +60,7 @@ class _WelcomeState extends State<Welcome> {
                           3,
                           context,
                           "get started",
-                          "Always Fascinated Learning",
+                          "Third See Screen",
                           "Anywhere, anytime. The time is at your discretion so study whenever you want",
                           "image path"
                       ),

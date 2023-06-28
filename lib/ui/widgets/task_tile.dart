@@ -31,18 +31,26 @@ class TaskTile extends StatelessWidget {
                       textStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                   ),
                   const SizedBox(
                     height: 12,
                   ),
+                  Text(
+                    task?.note??"",
+                    style: GoogleFonts.lato(
+                      textStyle: const TextStyle(fontSize: 15, color: Colors.black),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        color: Colors.grey[200],
+                      const Icon(
+                        Icons.access_time_filled,
+                        color: Colors.blueAccent,
                         size: 18,
                       ),
                       const SizedBox(width: 4),
@@ -50,26 +58,19 @@ class TaskTile extends StatelessWidget {
                         "${task!.startTime} - ${task!.endTime}",
                         style: GoogleFonts.lato(
                           textStyle:
-                          TextStyle(fontSize: 13, color: Colors.grey[100]),
+                          const TextStyle(fontSize: 13, color: Colors.black),
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    task?.note??"",
-                    style: GoogleFonts.lato(
-                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
-                    ),
                   ),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
-              height: 60,
+              height: 70,
               width: 0.5,
-              color: Colors.grey[200]!.withOpacity(0.7),
+              color: Colors.grey[500]!.withOpacity(0.5),
             ),
             RotatedBox(
             quarterTurns: 3,
@@ -79,7 +80,7 @@ class TaskTile extends StatelessWidget {
                 textStyle: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Colors.blueAccent),
               ),
             ),
           ),
@@ -91,13 +92,7 @@ class TaskTile extends StatelessWidget {
   _getBGClr(int no) {
     switch (no) {
       case 0:
-        return bluishClr;
-      case 1:
-        return pinkClr;
-      case 2:
-        return yellowClr;
-      default:
-        return bluishClr;
+        return Colors.white;
     }
   }
 }

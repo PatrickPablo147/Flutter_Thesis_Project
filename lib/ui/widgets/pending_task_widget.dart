@@ -25,7 +25,7 @@ class _PendingScheduleState extends State<PendingSchedule> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Completed Schedule",
+              "Pending Schedule",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,

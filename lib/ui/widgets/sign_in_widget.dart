@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:project1/controllers/navbar_controller.dart';
 
 AppBar buildAppBar() {
   return AppBar(
@@ -95,7 +94,7 @@ Widget buildLoginAndRegButton(String buttonName, String buttonType, void Functio
       height: 50.w,
       margin: EdgeInsets.only(left: 25.w, right: 25.w, top: buttonType=="login" ? 40.h : 20.h),
       decoration: BoxDecoration(
-        color: buttonType=="login" ? Colors.blue.shade800 : Colors.white,
+        color: buttonType=="login" ? Colors.blueAccent : Colors.white,
         borderRadius: BorderRadius.circular(15.w),
         boxShadow: [
           BoxShadow(

@@ -24,6 +24,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
+
   DateTime _selectedDate = DateTime.now();
   String _endTime= "12 : 00 PM";
   String _startTime= DateFormat("hh:mm:a").format(DateTime.now()).toString();
@@ -230,7 +231,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
                       items: repeatList.map<DropdownMenuItem<String>>((String? value){
                         return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value!,)
+                            child: Text(value!)
                         );
                       }
                       ).toList(),
@@ -250,7 +251,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue.shade800,
+                              backgroundColor: Colors.blueAccent,
                               foregroundColor: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -303,7 +304,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
       Get.snackbar("Required", "All fields are required!",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
-          colorText: pinkClr,
+          colorText: Colors.black,
           icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
       );
     }
@@ -363,7 +364,8 @@ class _AddTaskModelState extends State<AddTaskModel> {
   }
   //Get Date
   _getDateFromUser() async {
-    DateTime? pickerDate = await showDatePicker(context: context,
+    DateTime? pickerDate = await showDatePicker(
+        context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2010),
         lastDate: DateTime(2121)

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 
-const Color bluishClr = Color(0xFF4e5ae8);
+const Color bluishClr = Colors.blueAccent;
 const Color yellowClr = Color(0xFFFFB746);
 const Color pinkClr = Color(0xFFff4667);
 const Color white = Colors.white;
@@ -29,7 +29,7 @@ class Themes {
 TextStyle get subHeadingStyle {
   return GoogleFonts.lato (
     textStyle: TextStyle(
-      fontSize: 24,
+      fontSize: 22,
       fontWeight: FontWeight.bold,
       color: Get.isDarkMode?Colors.grey[400]:Colors.grey
     )

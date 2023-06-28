@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:project1/ui/widgets/task_info.dart';
+import 'package:project1/ui/widgets/task_tile2.dart';
 import '../../controllers/task_controller.dart';
 import '../../models/task.dart';
 
@@ -21,22 +20,7 @@ class _AllScheduleState extends State<AllSchedule> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "All Schedule",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const Gap(12),
-            Expanded(
-              child: _showTasks(),
-            )
-          ],
-        ),
+        child: _showTasks(),
       ),
     );
   }
@@ -45,8 +29,6 @@ class _AllScheduleState extends State<AllSchedule> {
     _taskController.getTasks();
     return Obx((){
       return ListView.builder(
-        padding: EdgeInsets.zero,
-        shrinkWrap: true,
         itemCount: _taskController.taskList.length,
         itemBuilder: (_, index){
           Task task = _taskController.taskList[index];
@@ -57,14 +39,13 @@ class _AllScheduleState extends State<AllSchedule> {
               child: FadeInAnimation(
                 child: Row(
                   children: [
-                    Expanded(child: TaskInfo(task))
+                    Expanded(child: TaskTile2(task))
                   ],
                 ),
               ),
             ),
           );
         }
-
       );
     });
   }
