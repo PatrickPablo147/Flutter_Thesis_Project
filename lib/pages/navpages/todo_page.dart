@@ -25,25 +25,45 @@ class _TodoPageState extends State<TodoPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Gap(10),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              "Task List",
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w500
-              ),
+          // const Gap(10),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 15),
+          //   child: Text(
+          //     "Task List",
+          //     style: TextStyle(
+          //         fontSize: 30,
+          //         fontWeight: FontWeight.w500
+          //     ),
+          //   ),
+          // ),
+
+          const Gap(5),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 45,
+            color: Colors.transparent,
+            child: Center(
+                child: Row(
+                  children: const [
+                    Gap(50),
+                    Icon(Icons.search),
+                    Text(
+                      "Search",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black
+                      ),
+                    ),
+                  ],
+                )
             ),
           ),
-
           const Gap(20),
           Container(
             padding: const EdgeInsets.all(15),
             margin: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F6FA),
-              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFF),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,7 +78,7 @@ class _TodoPageState extends State<TodoPage> {
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: MediaQuery.of(context).size.width / 20),
                     decoration: BoxDecoration(
                       color: _buttonIndex == 0 ? Colors.blue.shade800 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       "All",
@@ -80,7 +100,7 @@ class _TodoPageState extends State<TodoPage> {
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: MediaQuery.of(context).size.width / 20),
                     decoration: BoxDecoration(
                       color: _buttonIndex == 1 ? Colors.blue.shade800 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       "Completed",
@@ -102,7 +122,7 @@ class _TodoPageState extends State<TodoPage> {
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: MediaQuery.of(context).size.width / 20),
                     decoration: BoxDecoration(
                       color: _buttonIndex == 2 ? Colors.blue.shade800 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       "Pending",
@@ -116,9 +136,6 @@ class _TodoPageState extends State<TodoPage> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(
-            height: 25,
           ),
 
           _scheduleWidgets[_buttonIndex],

@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
             darkTheme: Themes.dark,
             themeMode: ThemeService().theme,
             home: const SignIn(),
-            routes: {
-              "signIn":(context) => const SignIn()
-            },
+            // routes: {
+            //   "signIn":(context) => const SignIn()
+            // },
           )
       ),
     );

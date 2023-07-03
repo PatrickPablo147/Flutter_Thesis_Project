@@ -23,7 +23,7 @@ AppBar appBar(BuildContext context, var notifyHelper) {
     actions: const [
       CircleAvatar(
         backgroundImage: AssetImage(
-            "images/user.png"
+            "assets/icons/img.png"
         ),
       ),
       SizedBox(width: 20,),

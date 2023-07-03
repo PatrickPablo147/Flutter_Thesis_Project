@@ -56,4 +56,15 @@ class DBHelper{
     ''', [1, id]);
   }
 
+  static updateDateTime(String date, String startTime, String endTime, int id) async {
+    return await _db!.rawUpdate('''
+      UPDATE tasks
+      SET date = ?,
+          startTime = ?,
+          endTime = ?,
+          isCompleted = ?
+      WHERE id = ?
+    ''', [date, startTime, endTime, 0, id]);
+  }
+
 }

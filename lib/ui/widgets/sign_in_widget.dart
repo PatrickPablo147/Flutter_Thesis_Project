@@ -32,7 +32,7 @@ Widget buildThirdPartyLogin(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _reusableIcon("google"),
-        _reusableIcon("apple"),
+        _reusableIcon("phone_login"),
         _reusableIcon("facebook")
       ],
     )

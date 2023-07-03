@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:project1/database/db_helper.dart';
-
 import '../models/task.dart';
 
 class TaskController extends GetxController{
@@ -20,7 +19,6 @@ class TaskController extends GetxController{
   void getTasks() async {
     List<Map<String, dynamic>> tasks = await DBHelper.query();
     taskList.assignAll(tasks.map((data) => Task.fromJson(data)).toList());
-
   }
 
   void delete(Task task) {
@@ -30,6 +28,11 @@ class TaskController extends GetxController{
 
   void markTaskCompleted(int id) async {
     await DBHelper.update(id);
+    getTasks();
+  }
+
+  void changeDateTime(int id, String date, String startTime, String endTime) async {
+    await DBHelper.updateDateTime(date, startTime, endTime, id);
     getTasks();
   }
 

@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 
 import '../theme/theme.dart';
 
-class DateTimeWidget extends StatelessWidget {
-  const DateTimeWidget({Key? key,
+class TimeContainerWidget extends StatelessWidget {
+  const TimeContainerWidget({Key? key,
     required this.titleText,
     required this.valueText,
     required this.onTap}) : super(key: key);

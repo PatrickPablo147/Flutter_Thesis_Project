@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
-import 'package:project1/ui/widgets/task_tile2.dart';
+import 'package:project1/ui/widgets/task_info.dart';
 import '../../controllers/task_controller.dart';
 import '../../models/task.dart';
 
@@ -39,7 +39,7 @@ class _AllScheduleState extends State<AllSchedule> {
               child: FadeInAnimation(
                 child: Row(
                   children: [
-                    Expanded(child: TaskTile2(task))
+                    Expanded(child: TaskInfo(task))
                   ],
                 ),
               ),

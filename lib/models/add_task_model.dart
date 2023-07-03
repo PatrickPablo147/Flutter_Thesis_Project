@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:project1/controllers/navbar_controller.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/ui/theme/theme.dart';
-import 'package:project1/ui/widgets/date_time_widget.dart';
+import 'package:project1/ui/widgets/time_container_widget.dart';
 import 'task.dart';
 
 class AddTaskModel extends StatefulWidget {
@@ -17,17 +17,16 @@ class AddTaskModel extends StatefulWidget {
 }
 
 class _AddTaskModelState extends State<AddTaskModel> {
-  /*
-  * Variables use in TaskPage Data input
-  * */
-  final TaskController _taskController = Get.put(TaskController());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
+
+  final TaskController _taskController = Get.put(TaskController());
+
   DateTime _selectedDate = DateTime.now();
-  String _endTime= "12 : 00 PM";
-  String _startTime= DateFormat("hh:mm:a").format(DateTime.now()).toString();
+  String _startTime= DateFormat("hh:mm a").format(DateTime.now()).toString();
+  String _endTime= DateFormat("hh:mm a").format(DateTime.now()).toString() ;
   int _selectedRemind = 5;
   List<int> remindList=[5, 10, 15, 20];
   String _selectedRepeat = "None";
@@ -139,20 +138,19 @@ class _AddTaskModelState extends State<AddTaskModel> {
                       controller: _dateController,
                       onTap: () => _getDateFromUser(),
                     ),
-
                   ),
 
                   const Gap(12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      DateTimeWidget(
+                      TimeContainerWidget(
                         titleText: 'Start Time',
                         valueText: _startTime,
                         onTap: () => _getTimeFromUser(isStartTime: true),
                       ),
                       const Gap(12),
-                      DateTimeWidget(
+                      TimeContainerWidget(
                         titleText: 'End Time',
                         valueText: _endTime,
                         onTap: () => _getTimeFromUser(isStartTime: false),
@@ -294,13 +292,13 @@ class _AddTaskModelState extends State<AddTaskModel> {
 
   //Condition to allow adding new data
   _validateDate(){
-    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty && !_selectedDate.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
       _addTaskToDb();
       Navigator.push(context, MaterialPageRoute(builder: (context){
         return const NavbarRoots();
       }));
     }
-    else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
+    else if (_titleController.text.isEmpty || _noteController.text.isEmpty || _selectedDate.isBefore(DateTime.now())) {
       Get.snackbar("Required", "All fields are required!",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
@@ -324,44 +322,44 @@ class _AddTaskModelState extends State<AddTaskModel> {
           isCompleted: 0,
         )
     );
-    print("My id is " "$value");
+    //print("My id is " "$value");
   }
   //Function that handles Color button
-  _colorPallet() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Category",
-          style: titleStyle,
-        ),
-        const SizedBox(height: 8.0,),
-        Wrap(
-          children: List<Widget>.generate(3,
-                  (int index) {
-                return GestureDetector(
-                  onTap: (){
-                    setState(() {
-                      _selectedColor = index;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: index==0?primaryClr:index==1?pinkClr:yellowClr,
-                      child: _selectedColor==index?const Icon(Icons.done,
-                        color: Colors.white,
-                        size: 16,):Container(),
-                    ),
-                  ),
-                );
-              }
-          ),
-        )
-
-      ],
-    );
-  }
+  // _colorPallet() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text("Category",
+  //         style: titleStyle,
+  //       ),
+  //       const SizedBox(height: 8.0,),
+  //       Wrap(
+  //         children: List<Widget>.generate(3,
+  //                 (int index) {
+  //               return GestureDetector(
+  //                 onTap: (){
+  //                   setState(() {
+  //                     _selectedColor = index;
+  //                   });
+  //                 },
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.only(right: 8.0),
+  //                   child: CircleAvatar(
+  //                     radius: 14,
+  //                     backgroundColor: index==0?primaryClr:index==1?pinkClr:yellowClr,
+  //                     child: _selectedColor==index?const Icon(Icons.done,
+  //                       color: Colors.white,
+  //                       size: 16,):Container(),
+  //                   ),
+  //                 ),
+  //               );
+  //             }
+  //         ),
+  //       )
+  //
+  //     ],
+  //   );
+  // }
   //Get Date
   _getDateFromUser() async {
     DateTime? pickerDate = await showDatePicker(
@@ -377,29 +375,41 @@ class _AddTaskModelState extends State<AddTaskModel> {
       });
     }
     else {
-      print("it's null or somethings is wrong");
+      Get.back;
+      //print("it's null or somethings is wrong");
     }
   }
-  //Get Time
+
+  bool _isTimeBefore(String time1, String time2) {
+    DateTime dateTime1 = DateFormat("hh:mm a").parse(time1);
+    DateTime dateTime2 = DateFormat("hh:mm a").parse(time2);
+    return dateTime1.isBefore(dateTime2);
+  }
+
   _getTimeFromUser({required bool isStartTime}) async {
     var pickedTime = await _showTimePicker();
-    String formattedTime = pickedTime.format(context);
-    if (pickedTime==null){
+    if (pickedTime == null) {
       print("Time cancel");
-    }
-    else if (isStartTime==true) {
-      setState(() {
-        _startTime = formattedTime;
-      });
-    }
-    else if (isStartTime==false) {
-      setState(() {
-        _endTime = formattedTime;
-      });
+    } else {
+      String formattedTime = pickedTime.format(context);
+      if (isStartTime) {
+        setState(() {
+          _startTime = formattedTime;
+          if (_isTimeBefore(_endTime, formattedTime)) {
+            _endTime = formattedTime;
+          }
+        });
+      } else {
+        setState(() {
+          if (_isTimeBefore(formattedTime, _startTime)) {
+            _endTime = _startTime;
+          } else {
+            _endTime = formattedTime;
+          }
+        });
+      }
     }
   }
-  //show Time Picker
-  //Format Time Picker to String hour : minute
   _showTimePicker() {
     return showTimePicker(
         initialEntryMode: TimePickerEntryMode.input,
@@ -411,4 +421,24 @@ class _AddTaskModelState extends State<AddTaskModel> {
     );
   }
 
+//Get Time
+// _getTimeFromUser({required bool isStartTime}) async {
+//   var pickedTime = await _showTimePicker();
+//   String formattedTime = pickedTime.format(context);
+//   if (pickedTime==null){
+//     //Get.back;
+//     print("Time cancel");
+//   }
+//   else if (isStartTime==true) {
+//     setState(() {
+//       _startTime = formattedTime;
+//     });
+//   }
+//   else if (isStartTime==false) {
+//     setState(() {
+//       _endTime = formattedTime;
+//     });
+//   }
+// }
+//show Time Picker Format Time Picker to String hour : minute
 }

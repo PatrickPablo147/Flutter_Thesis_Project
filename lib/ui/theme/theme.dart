@@ -31,7 +31,7 @@ TextStyle get subHeadingStyle {
     textStyle: TextStyle(
       fontSize: 22,
       fontWeight: FontWeight.bold,
-      color: Get.isDarkMode?Colors.grey[400]:Colors.grey
+      color: Get.isDarkMode?Colors.white:Colors.black
     )
   );
 }
@@ -51,7 +51,7 @@ TextStyle get titleStyle {
       textStyle: TextStyle(
           fontSize: 30,
           fontWeight: FontWeight.w400,
-          color: Get.isDarkMode?Colors.white:Colors.black
+          color: Get.isDarkMode?Colors.grey[600]!:Colors.grey[300]!
       )
   );
 }
