@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -14,7 +16,7 @@ class TaskInfo extends StatelessWidget {
   final Task? task;
   final _taskController = Get.put(TaskController());
   final TextEditingController _dateController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime(2010, 1, 1);
   final String _startTime= DateFormat("hh:mm a").format(DateTime.now()).toString();
   final String _endTime= DateFormat("hh:mm a").format(DateTime.now()).toString() ;
 
@@ -193,6 +195,21 @@ class TaskInfo extends StatelessWidget {
     // Handle the case when selectedDate is null if needed.
   }
 
+  _validateDateUpdate() {
+    DateTime dateValue = DateFormat.yMd().parse(task!.date!);
+    if(_selectedDate.isAfter(dateValue.subtract(const Duration(days: 1)))){
+      _taskController.changeDateTime(task!.id!, DateFormat.yMd().format(_selectedDate), _startTime, _endTime);
+    }
+    else {
+      Get.snackbar("Required", "All fields are required!",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.white,
+        colorText: Colors.black,
+        icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
+      );
+    }
+  }
+
   _showBottomSheet(BuildContext context, Task task, TaskController taskController) {
     Get.bottomSheet(
         Container(
@@ -239,7 +256,7 @@ class TaskInfo extends StatelessWidget {
                             suffixIcon: const Icon(Icons.calendar_today_outlined, color: Colors.grey,),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
-                            hintText: 'mm / dd / yy',
+                            hintText: task.date,
                             hintStyle: TextStyle(
                                 color: Colors.grey.shade500
                             )
@@ -276,8 +293,6 @@ class TaskInfo extends StatelessWidget {
                 ),
               ),
 
-
-
               const Spacer(),
               //Save and Cancel button
               Row(
@@ -297,7 +312,7 @@ class TaskInfo extends StatelessWidget {
                   _bottomSheetButton(
                     lable: "Save",
                     onTap: (){
-                      _taskController.changeDateTime(task.id!, DateFormat.yMd().format(_selectedDate), _startTime, _endTime);
+                      _validateDateUpdate();
                       Get.back();
                     },
                     clr: primaryClr,

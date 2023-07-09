@@ -9,7 +9,6 @@ import 'package:project1/models/add_task_model.dart';
 import 'package:project1/ui/theme/theme.dart';
 import '../../models/task.dart';
 import '../../services/notification_services.dart';
-import '../../services/theme_services.dart';
 import '../../ui/widgets/build_task_widget.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -84,6 +83,15 @@ class _SchedulePageState extends State<SchedulePage> {
     }
   }
 
+  _getNotify(date, task) {
+    var myTime = DateFormat("HH:mm").format(date);
+    return notifyHelper.scheduledNotification(
+        int.parse(myTime.toString().split(":")[0]),
+        int.parse(myTime.toString().split(":")[1]),
+        task
+    );
+  }
+
   /*Custom Functions*/
   //Show the created Task
   _showTasks(){
@@ -100,20 +108,28 @@ class _SchedulePageState extends State<SchedulePage> {
             if (task.isCompleted == 0 && dateFormatted.isBefore(_selectedDate)) {
               switch (task.repeat){
                 case 'Daily': {
+                  DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                  _getNotify(date, task);
                   return buildTaskWidget(context, task, index, _taskController);
-                } //break;
+                } break;
                 case 'Weekly': {
                   if (_isRecurringWeeklyTask(task, dateFormatted)) {
+                    DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
+                    _getNotify(date, task);
                     return buildTaskWidget(context, task, index, _taskController);
                   }
                 } break;
                 case 'Monthly': {
                   if (_isRecurringMonthlyTask(task, dateFormatted)) {
+                    DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
+                    _getNotify(date, task);
                     return buildTaskWidget(context, task, index, _taskController);
                   }
                 }break;
                 case 'None': {
                   if(task.date == DateFormat.yMd().format(_selectedDate) && task.isCompleted == 0){
+                    DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                    _getNotify(date, task);
                     return buildTaskWidget(context, task, index, _taskController);
                   }
                 }break;
@@ -123,6 +139,8 @@ class _SchedulePageState extends State<SchedulePage> {
               }
             }
             if(task.date == DateFormat.yMd().format(_selectedDate) && task.isCompleted == 0){
+              DateTime date = DateFormat.jm().parse(task.startTime.toString());
+              _getNotify(date, task);
               return buildTaskWidget(context, task, index, _taskController);
             }
             else {
@@ -181,7 +199,7 @@ class _SchedulePageState extends State<SchedulePage> {
       ),
     );
   }
-
+  //Check Holiday
   bool isHoliday(DateTime date) {
     // Define your logic to determine if a date is a holiday or not
     // You can check against a list of holiday dates or use any other custom logic based on your requirements
@@ -204,6 +222,7 @@ class _SchedulePageState extends State<SchedulePage> {
       padding: const EdgeInsets.only(top: 15, left: 100, bottom: 15),
       child: Transform.scale(
         scale: 1.5,
+        //Custom Calendar Widget
         child: CalendarTimeline(
           initialDate: _selectedDate, //?? DateTime(2020, 4, 20),
           firstDate: DateTime(2010, 1, 1),
@@ -221,44 +240,6 @@ class _SchedulePageState extends State<SchedulePage> {
           selectableDayPredicate: (date) => date.day != 23,
         ),
       ),
-
-      // child: DatePicker(
-      //   _selectedDate.isBefore(DateTime.now())
-      //       ?_selectedDate
-      //       : DateTime.now(),
-      //   height: 120,
-      //   width: 80,
-      //   initialSelectedDate: _selectedDate,
-      //   selectionColor: Colors.blue.shade800,
-      //   selectedTextColor: Colors.white,
-      //   dateTextStyle: GoogleFonts.lato(
-      //       textStyle: const TextStyle(
-      //           fontSize: 40,
-      //           fontWeight: FontWeight.w600,
-      //           color: Colors.grey,
-      //       )
-      //   ),
-      //   dayTextStyle: GoogleFonts.lato(
-      //       textStyle: const TextStyle(
-      //           fontSize: 15,
-      //           fontWeight: FontWeight.w600,
-      //           color: Colors.grey,
-      //       )
-      //   ),
-      //   monthTextStyle: GoogleFonts.lato(
-      //       textStyle: const TextStyle(
-      //           fontSize: 12,
-      //           fontWeight: FontWeight.w600,
-      //           color: Colors.grey
-      //       )
-      //   ),
-      //   onDateChange: (date){
-      //     setState(() {
-      //       _selectedDate = date;
-      //     });
-      //   },
-      //
-      // ),
     );
   }
 }

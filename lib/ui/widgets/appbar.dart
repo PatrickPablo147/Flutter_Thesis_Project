@@ -14,7 +14,7 @@ AppBar appBar(BuildContext context, var notifyHelper) {
             body: Get.isDarkMode?"Activated Light Theme":"Activated Dark Theme"
         );
 
-        notifyHelper.scheduledNotification();
+        // notifyHelper.scheduledNotification();
       },
       child: Icon(Get.isDarkMode ? Icons.wb_sunny_outlined:Icons.nightlight_round,
           size: 20,

@@ -15,6 +15,7 @@ class AllSchedule extends StatefulWidget {
 class _AllScheduleState extends State<AllSchedule> {
   final _taskController = Get.put(TaskController());
 
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -32,7 +33,6 @@ class _AllScheduleState extends State<AllSchedule> {
         itemCount: _taskController.taskList.length,
         itemBuilder: (_, index){
           Task task = _taskController.taskList[index];
-          //print(task.toJson());
           return AnimationConfiguration.staggeredList(
             position: index,
             child: SlideAnimation(

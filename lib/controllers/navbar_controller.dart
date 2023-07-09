@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project1/pages/navpages/profile_page.dart';
 import 'package:project1/services/notification_services.dart';
 import 'package:project1/ui/widgets/appbar.dart';
 import '../pages/navpages/schedule_page.dart';
@@ -18,8 +19,9 @@ class _NavbarRootsState extends State<NavbarRoots> {
   final _screens = [
     const SchedulePage(),
     const TodoPage(),
-    Container()
+    const ProfilePage()
   ];
+
   var notifyHelper;
 
   @override
@@ -59,38 +61,8 @@ class _NavbarRootsState extends State<NavbarRoots> {
             BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Todo"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ],
-
-
         ),
       ),
-    );
-  }
-  _appBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.backgroundColor,
-      leading: GestureDetector(
-        onTap: (){
-          ThemeService().switchTheme();
-          notifyHelper.displayNotification(
-              title: "Theme Changed",
-              body: Get.isDarkMode?"Activated Light Theme":"Activated Dark Theme"
-          );
-
-          notifyHelper.scheduledNotification();
-        },
-        child: Icon(Get.isDarkMode ? Icons.wb_sunny_outlined:Icons.nightlight_round,
-            size: 20,
-            color: Get.isDarkMode ? Colors.white:Colors.black),
-      ),
-      actions: const [
-        CircleAvatar(
-          backgroundImage: AssetImage(
-              "assets/icons/img.png",
-          ),
-        ),
-        SizedBox(width: 20,),
-      ],
     );
   }
 }

@@ -25,18 +25,6 @@ class _TodoPageState extends State<TodoPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const Gap(10),
-          // const Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 15),
-          //   child: Text(
-          //     "Task List",
-          //     style: TextStyle(
-          //         fontSize: 30,
-          //         fontWeight: FontWeight.w500
-          //     ),
-          //   ),
-          // ),
-
           const Gap(5),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -62,8 +50,8 @@ class _TodoPageState extends State<TodoPage> {
           Container(
             padding: const EdgeInsets.all(15),
             margin: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF),
+            decoration: const BoxDecoration(
+              //color: Color(0xFF),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

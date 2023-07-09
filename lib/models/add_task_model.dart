@@ -360,6 +360,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
   //     ],
   //   );
   // }
+
   //Get Date
   _getDateFromUser() async {
     DateTime? pickerDate = await showDatePicker(
@@ -421,24 +422,4 @@ class _AddTaskModelState extends State<AddTaskModel> {
     );
   }
 
-//Get Time
-// _getTimeFromUser({required bool isStartTime}) async {
-//   var pickedTime = await _showTimePicker();
-//   String formattedTime = pickedTime.format(context);
-//   if (pickedTime==null){
-//     //Get.back;
-//     print("Time cancel");
-//   }
-//   else if (isStartTime==true) {
-//     setState(() {
-//       _startTime = formattedTime;
-//     });
-//   }
-//   else if (isStartTime==false) {
-//     setState(() {
-//       _endTime = formattedTime;
-//     });
-//   }
-// }
-//show Time Picker Format Time Picker to String hour : minute
 }
