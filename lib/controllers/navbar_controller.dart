@@ -17,7 +17,7 @@ class NavbarRoots extends StatefulWidget {
 class _NavbarRootsState extends State<NavbarRoots> {
   int _index = 0;
   final _screens = [
-    const SchedulePage(),
+    const HomePage(),
     const TodoPage(),
     const ProfilePage()
   ];
@@ -35,7 +35,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(context, notifyHelper),
+      //appBar: appBar(context, notifyHelper),
       backgroundColor: Colors.white,
       body: _screens[_index],
       bottomNavigationBar: SizedBox(
@@ -58,7 +58,7 @@ class _NavbarRootsState extends State<NavbarRoots> {
           },
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Schedule"),
-            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Todo"),
+            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "To-do"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ],
         ),

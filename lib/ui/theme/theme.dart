@@ -60,8 +60,17 @@ TextStyle get subTitleStyle {
   return GoogleFonts.poppins (
       textStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Get.isDarkMode? Colors.white:Colors.black
+          fontWeight: FontWeight.w400,
+          color: Colors.black
       )
+  );
+}
+
+TextStyle get textStyle {
+  return GoogleFonts.poppins(
+    textStyle: const TextStyle(
+        fontWeight: FontWeight.normal,
+        fontSize: 14
+    ),
   );
 }

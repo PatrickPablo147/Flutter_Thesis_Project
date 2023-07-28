@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/models/task.dart';
 import 'package:project1/ui/theme/theme.dart';
-import 'package:project1/ui/widgets/task_tile.dart';
+import 'package:project1/ui/widgets/reschedule_widget.dart';
+import 'package:project1/ui/widgets/task_info.dart';
+import 'package:project1/ui/widgets/task_widget.dart';
 
-Widget buildTaskWidget(BuildContext context, Task task, int index, TaskController taskController) {
+Widget buildTaskTileWidget(BuildContext context, Task task, int index, TaskController taskController) {
   return AnimationConfiguration.staggeredList(
     position: index,
     child: SlideAnimation(
@@ -17,7 +19,29 @@ Widget buildTaskWidget(BuildContext context, Task task, int index, TaskControlle
               onTap: () {
                 _showBottomSheet(context, task, taskController);
               },
-              child: TaskTile(task)
+              child: TaskWidget(task)
+            )
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget buildTaskInfoWidget(BuildContext context, Task task, int index, TaskController taskController) {
+  return AnimationConfiguration.staggeredList(
+    position: index,
+    child: SlideAnimation(
+      child: FadeInAnimation(
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                  onTap: () {
+                    _showBottomSheet(context, task, taskController);
+                  },
+                  child: TaskInfo(task)
+              ),
             )
           ],
         ),
@@ -52,9 +76,11 @@ _showBottomSheet(BuildContext context, Task task, TaskController taskController)
             ),
             const Spacer(),
             task.isCompleted==1
-                ?Container() : _bottomSheetButton(
+                ? Container() : _bottomSheetButton(
               lable: "Task Completed",
               onTap: (){
+                //taskController.delete(task);
+                print('task c: $task');
                 taskController.markTaskCompleted(task.id!);
                 Get.back();
               },
@@ -62,10 +88,15 @@ _showBottomSheet(BuildContext context, Task task, TaskController taskController)
               context: context,
             ),
             _bottomSheetButton(
-              lable: "Delete Task",
-              onTap: (){
-                taskController.delete(task);
-                Get.back();
+              lable: "Reschedule Task",
+              onTap: () {
+                print('task value: $task');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RescheduleEvent(task: task,))
+                );
+                //taskController.delete(task);
+                //Get.back();
               },
               clr: Colors.red[300]!,
               context: context,
@@ -120,3 +151,27 @@ _bottomSheetButton({required String lable,
     ),
   );
 }
+
+Future openDialog(BuildContext context, Task task, TaskController taskController) => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Are your task Completed now?'),
+      // content: TextField(
+      //   decoration: InputDecoration(hintText: 'Enter your name'),
+      // ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            taskController.markTaskCompleted(task.id!);
+            Get.back();
+            //Navigator.of(context, rootNavigator: true).pop();
+          },
+          child: const Text('Yes')
+        ),
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text('No')
+        )
+      ],
+    )
+);

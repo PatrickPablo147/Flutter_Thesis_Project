@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -41,9 +43,13 @@ Future<TimeOfDay?> getTimeFromUser(BuildContext context, bool isStartTime, Strin
   if (pickedTime == null) {
     Get.back();
     //print("Time cancel");
-  } else if (isStartTime) {
+  }
+  else if (isStartTime) {
+    print(pickedTime);
     return pickedTime;
-  } else {
+  }
+  else {
+    print(pickedTime);
     return pickedTime;
   }
 

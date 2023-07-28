@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:project1/ui/theme/theme.dart';
 
-AppBar buildAppBar() {
+AppBar buildAppBar(String type) {
   return AppBar(
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.white24,
     elevation: 0,
     centerTitle: true,
     title: Text(
-      "Log in",
-      style: TextStyle(
-          color: Colors.black,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.normal
-      ),
+      type,
+      style: subHeadingStyle,
+      // style: TextStyle(
+      //     color: Colors.black,
+      //     fontSize: 16.sp,
+      //     fontWeight: FontWeight.normal
+      // ),
     ),
     bottom: PreferredSize(
       preferredSize: Size.fromHeight(1.0),
@@ -42,12 +44,12 @@ Widget buildThirdPartyLogin(BuildContext context) {
 Widget buildTextField(String hintText, String textType, String iconName) {
   return Container(
     width: 325.w,
-    height: 50.h,
-    margin: EdgeInsets.only(bottom: 20.h),
+    height: 45.h,
+    margin: EdgeInsets.only(bottom: 13.h),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(15.w),
-      border: Border.all(color: Colors.black)
+      border: Border.all(color: Colors.black26)
     ),
     child: Row(
       children: [
@@ -108,11 +110,7 @@ Widget buildLoginAndRegButton(String buttonName, String buttonType, void Functio
       child: Center(
         child: Text(
           buttonName,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.normal,
-            color: buttonType=="login" ? Colors.white : Colors.black
-          ),
+          style: subTitleStyle.copyWith(color: buttonType=="login" ? Colors.white : Colors.black),
         ),
       ),
     ),
@@ -124,11 +122,7 @@ Widget reusableText(String text) {
     margin: EdgeInsets.only(bottom: 5.h),
     child: Text(
       text,
-      style: TextStyle(
-          color: Colors.grey,
-          fontWeight: FontWeight.normal,
-          fontSize: 14.sp
-      ),
+      style: textStyle
     ),
   );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<String?> getTimeFromUser(BuildContext context, {required bool isStartTime}) async {
+Future<String?> getTime(BuildContext context, {required bool isStartTime}) async {
   var pickedTime = await showTimePicker(
     context: context,
     initialTime: TimeOfDay.now(),
@@ -11,6 +11,7 @@ Future<String?> getTimeFromUser(BuildContext context, {required bool isStartTime
     return null;
   } else {
     String formattedTime = pickedTime.format(context);
+    print(formattedTime);
     return formattedTime;
   }
 }

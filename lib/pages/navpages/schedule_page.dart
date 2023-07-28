@@ -1,9 +1,11 @@
 /*This Class Manage the DatePage*/
-import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neat_and_clean_calendar/flutter_neat_and_clean_calendar.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/models/add_task_model.dart';
 import 'package:project1/ui/theme/theme.dart';
@@ -11,18 +13,42 @@ import '../../models/task.dart';
 import '../../services/notification_services.dart';
 import '../../ui/widgets/build_task_widget.dart';
 
-class SchedulePage extends StatefulWidget {
-  const SchedulePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<SchedulePage> createState() => _SchedulePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
+class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
   final _taskController = Get.put(TaskController());
   var notifyHelper;
+  bool _checker = true;
 
+
+  final List<NeatCleanCalendarEvent> _eventList = [
+    NeatCleanCalendarEvent('MultiDay Event A',
+        startTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 10, 0),
+        endTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day + 2, 12, 0),
+        color: Colors.orange,
+        isMultiDay: true),
+    NeatCleanCalendarEvent('Allday Event B',
+        startTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day - 2, 14, 30),
+        endTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day + 2, 17, 0),
+        color: Colors.pink,
+        isAllDay: true),
+    NeatCleanCalendarEvent('Normal Event D',
+        startTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 14, 30),
+        endTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 17, 0),
+        color: Colors.indigo),
+  ];
 
   @override
   void initState() {
@@ -36,13 +62,49 @@ class _SchedulePageState extends State<SchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //appBar: appBar(context, notifyHelper),
-      body: Column(
-        children: [
-          _addTaskBar(),
-          _addDateBar(),
-          const SizedBox(height: 20,),
-          _showTasks(),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: AppBar(
+          elevation: 0,
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          leading: const Icon(LineAwesomeIcons.bars, size: 30,),
+          title: ListTile(
+            leading: Text('Hello', style: textStyle.copyWith(fontSize: 25, fontWeight: FontWeight.normal),),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 40,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)
+                    ),
+                  ),
+                  onPressed: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddTaskModel())
+                    );
+                  },
+                  child: Center(
+                    child: Text('+ Event', style: textStyle.copyWith(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: _calendarBar()
       ),
     );
   }
@@ -65,24 +127,6 @@ class _SchedulePageState extends State<SchedulePage> {
     return currentDate.isAtSameMomentAs(_selectedDate);
   }
 
-  //Get Date From User ->> Pop up Date Picker
-  _getDateFromUser() async {
-    DateTime? pickerDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2010),
-        lastDate: DateTime(2121)
-    );
-    if (pickerDate!=null){
-      setState(() {
-        _selectedDate = pickerDate;
-      });
-    }
-    else {
-      print("it's null or somethings is wrong");
-    }
-  }
-
   _getNotify(date, task) {
     var myTime = DateFormat("HH:mm").format(date);
     return notifyHelper.scheduledNotification(
@@ -93,44 +137,104 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   /*Custom Functions*/
+
+  _calendarBar() {
+    _taskController.getTasks();
+    return Calendar(
+      startOnMonday: false,
+      weekDays: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      eventsList: _eventList,
+      eventListBuilder: (context, day) {
+        return Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              color: Colors.grey.withOpacity(0.2),
+              height: _checker ? 375 : 575,
+              //constraints: BoxConstraints(maxHeight: _checker ? 355 : 555),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: _showTasks(),
+              ),
+            ),
+          ),
+        );
+      },
+      onExpandStateChanged: (check) {
+        _checker = check;
+      },
+      isExpandable: true,
+      isExpanded: true,
+      eventDoneColor: Colors.green,
+      selectedColor: Colors.blueAccent,
+      selectedTodayColor: Colors.blueAccent,
+      todayColor: Colors.blue,
+      eventColor: null,
+      onDateSelected: (value){
+        setState(() {
+          _selectedDate = value;
+        });
+      },
+      locale: 'en_ISO',
+      hideTodayIcon: true,
+      allDayEventText: 'All day',
+      multiDayEndText: 'End',
+      expandableDateFormat: 'MMMM dd, yyyy',
+      datePickerType: DatePickerType.date,
+      displayMonthTextStyle: GoogleFonts.poppins(
+        textStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20
+        )
+      ),
+      bottomBarTextStyle: GoogleFonts.poppins(
+        color: Colors.grey,
+        fontSize: 14
+      ),
+      dayOfWeekStyle: GoogleFonts.poppins(
+        textStyle: const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.normal, fontSize: 11
+        ),
+      ),
+    );
+  }
+
   //Show the created Task
   _showTasks(){
-    _taskController.getTasks();
-    return Expanded(
-      child: Obx((){
-        return ListView.builder(
+    return Obx((){
+      return ListView.builder(
           itemCount: _taskController.taskList.length,
+          shrinkWrap: true,
           itemBuilder: (_, index){
             Task task = _taskController.taskList[index];
             //print(task.toJson());
             DateTime dateFormatted = DateFormat.yMd().parse(task.date!);
             //Condition to show the created Task
-            if (task.isCompleted == 0 && dateFormatted.isBefore(_selectedDate)) {
+            if (dateFormatted.isBefore(_selectedDate)) {
               switch (task.repeat){
                 case 'Daily': {
                   DateTime date = DateFormat.jm().parse(task.startTime.toString());
                   _getNotify(date, task);
-                  return buildTaskWidget(context, task, index, _taskController);
-                } break;
+                  return buildTaskTileWidget(context, task, index, _taskController);
+                }
                 case 'Weekly': {
                   if (_isRecurringWeeklyTask(task, dateFormatted)) {
                     DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
                     _getNotify(date, task);
-                    return buildTaskWidget(context, task, index, _taskController);
+                    return buildTaskTileWidget(context, task, index, _taskController);
                   }
                 } break;
                 case 'Monthly': {
                   if (_isRecurringMonthlyTask(task, dateFormatted)) {
                     DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
                     _getNotify(date, task);
-                    return buildTaskWidget(context, task, index, _taskController);
+                    return buildTaskTileWidget(context, task, index, _taskController);
                   }
                 }break;
                 case 'None': {
-                  if(task.date == DateFormat.yMd().format(_selectedDate) && task.isCompleted == 0){
+                  if(task.date == DateFormat.yMd().format(_selectedDate)){
                     DateTime date = DateFormat.jm().parse(task.startTime.toString());
                     _getNotify(date, task);
-                    return buildTaskWidget(context, task, index, _taskController);
+                    return buildTaskTileWidget(context, task, index, _taskController);
                   }
                 }break;
                 default: {
@@ -138,108 +242,16 @@ class _SchedulePageState extends State<SchedulePage> {
                 }
               }
             }
-            if(task.date == DateFormat.yMd().format(_selectedDate) && task.isCompleted == 0){
+            if(task.date == DateFormat.yMd().format(_selectedDate)){
               DateTime date = DateFormat.jm().parse(task.startTime.toString());
               _getNotify(date, task);
-              return buildTaskWidget(context, task, index, _taskController);
+              return buildTaskTileWidget(context, task, index, _taskController);
             }
             else {
               return Container();
             }
           }
-        );
-      }),
-    );
-  }
-  //Date Text and Add Task Button
-  _addTaskBar(){
-    return  Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(DateFormat.yMMMMd().format(_selectedDate),
-                  style: subHeadingStyle
-              ),
-              const Gap(12),
-              GestureDetector(
-                onTap: () {
-                  _getDateFromUser();
-                },
-                child: const Icon(
-                  Icons.arrow_drop_down,
-                  size: 30,
-                  color: Colors.grey,
-                ),
-              )
-            ],
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade800,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25)
-            ),
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddTaskModel())
-              );
-              _taskController.getTasks();
-            },
-            child: const Text('+ Add Task'),
-          ),
-        ],
-      ),
-    );
-  }
-  //Check Holiday
-  bool isHoliday(DateTime date) {
-    // Define your logic to determine if a date is a holiday or not
-    // You can check against a list of holiday dates or use any other custom logic based on your requirements
-
-    // Example: Checking if the date is Christmas (December 25th)
-    if (date.month == 12 && date.day == 25) {
-      return true;
-    }
-    // Example: Checking if the date is New Year's Day (January 1st)
-    if (date.month == 1 && date.day == 1) {
-      return true;
-    }
-    // Add more conditions as needed for your specific holiday dates
-    return false; // Replace with your logic
-  }
-
-  //Horizontal Date Picker
-  _addDateBar() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 100, bottom: 15),
-      child: Transform.scale(
-        scale: 1.5,
-        //Custom Calendar Widget
-        child: CalendarTimeline(
-          initialDate: _selectedDate, //?? DateTime(2020, 4, 20),
-          firstDate: DateTime(2010, 1, 1),
-          lastDate: DateTime(2040, 11, 20),
-          onDateSelected: (date) => setState(() {
-            _selectedDate = date;
-          }),
-          leftMargin: 0,
-          monthColor: Colors.black45,
-          dayColor: Colors.black45,
-          activeDayColor: Colors.white,
-          activeBackgroundDayColor: Colors.blueAccent,
-          dotsColor: const Color(0xFFFFFFFF).withOpacity(0.8),
-          locale: 'en_ISO',
-          selectableDayPredicate: (date) => date.day != 23,
-        ),
-      ),
-    );
+      );
+    });
   }
 }

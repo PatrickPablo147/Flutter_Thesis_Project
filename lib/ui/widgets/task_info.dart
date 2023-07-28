@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -11,7 +9,7 @@ import '../../models/task.dart';
 import 'date_time_utils.dart';
 
 class TaskInfo extends StatelessWidget {
-  TaskInfo(this.task, {super.key});
+  TaskInfo(this.task, {super.key}) ;
 
   final Task? task;
   final _taskController = Get.put(TaskController());
@@ -105,14 +103,14 @@ class TaskInfo extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                            color: task!.isCompleted == 1 ? Colors.green : Colors.red,
+                            color: task!.isCompleted == 1 ? Colors.green : Colors.blueAccent,
                             //color: Colors.green,
                             shape: BoxShape.circle
                         ),
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        task!.isCompleted == 1 ? "COMPLETED" : "PENDING",
+                        task!.isCompleted == 1 ? "COMPLETE" : "ONGOING",
                         style: const TextStyle(
                           color: Colors.black54,
                         ),
@@ -123,60 +121,60 @@ class TaskInfo extends StatelessWidget {
               ),
             ),
             const Gap(15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                //Delete button
-                InkWell(
-                  onTap: () {
-                    _taskController.delete(task!);
-                  },
-                  child: Container(
-                    width: 150,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFF4F6FA),
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Change date button
-                InkWell(
-                  onTap: () {
-                    _showBottomSheet(context, task!, _taskController);
-                  },
-                  child: Container(
-                    width: 150,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                        color: Colors.blue.shade800,
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Reschedule",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const Gap(10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     //Delete button
+            //     InkWell(
+            //       onTap: () {
+            //         _taskController.delete(task!);
+            //       },
+            //       child: Container(
+            //         width: 150,
+            //         padding: const EdgeInsets.symmetric(vertical: 12),
+            //         decoration: BoxDecoration(
+            //             color: const Color(0xFFF4F6FA),
+            //             borderRadius: BorderRadius.circular(10)
+            //         ),
+            //         child: const Center(
+            //           child: Text(
+            //             "Delete",
+            //             style: TextStyle(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w500,
+            //                 color: Colors.black
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     //Change date button
+            //     InkWell(
+            //       onTap: () {
+            //         _showBottomSheet(context, task!, _taskController);
+            //       },
+            //       child: Container(
+            //         width: 150,
+            //         padding: const EdgeInsets.symmetric(vertical: 12),
+            //         decoration: BoxDecoration(
+            //             color: Colors.blue.shade800,
+            //             borderRadius: BorderRadius.circular(10)
+            //         ),
+            //         child: const Center(
+            //           child: Text(
+            //             "Reschedule",
+            //             style: TextStyle(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w500,
+            //                 color: Colors.white
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // ),
+            // const Gap(10),
           ],
         ),
       ),
@@ -201,12 +199,6 @@ class TaskInfo extends StatelessWidget {
       _taskController.changeDateTime(task!.id!, DateFormat.yMd().format(_selectedDate), _startTime, _endTime);
     }
     else {
-      Get.snackbar("Required", "All fields are required!",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white,
-        colorText: Colors.black,
-        icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
-      );
     }
   }
 
@@ -232,7 +224,6 @@ class TaskInfo extends StatelessWidget {
                     color: Get.isDarkMode?Colors.grey[600]:Colors.grey[300]
                 ),
               ),
-
               const Gap(25),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -267,7 +258,6 @@ class TaskInfo extends StatelessWidget {
                         },
                       ),
                     ),
-
                     const Gap(12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -276,17 +266,18 @@ class TaskInfo extends StatelessWidget {
                           titleText: 'Start Time',
                           valueText: task.startTime.toString(),
                           onTap: () {
+                            //getTime(context, isStartTime: true);
                             getTimeFromUser(context, true, _startTime, _endTime);
                           },
                         ),
                         const Gap(12),
-                        TimeContainerWidget(
-                          titleText: 'End Time',
-                          valueText: task.endTime.toString(),
-                          onTap: () {
-                            getTimeFromUser(context, false , _startTime, _endTime,);
-                          },
-                        )
+                          TimeContainerWidget(
+                            titleText: 'End Time',
+                            valueText: task.endTime.toString(),
+                            onTap: () {
+                              getTimeFromUser(context, false , _startTime, _endTime,);
+                            },
+                          )
                       ],
                     ),
                   ],
@@ -359,4 +350,5 @@ class TaskInfo extends StatelessWidget {
       ),
     );
   }
+
 }
