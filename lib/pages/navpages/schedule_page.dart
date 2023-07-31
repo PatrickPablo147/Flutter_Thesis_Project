@@ -141,6 +141,40 @@ class _HomePageState extends State<HomePage> {
     return currentDate.isAtSameMomentAs(_selectedDate);
   }
 
+  // List<Task> _filterTasks() {
+  //   return _taskController.taskList.where((task) {
+  //     DateTime startTime = DateFormat.yMd().parse(task.date!);
+  //     DateTime endTime = _getRecurrence(task.repeat.toString(), task);
+  //
+  //     // Check if the selected date is within the date range defined by the start and end dates.
+  //     DateTime startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+  //     DateTime endOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, 23, 59, 59);
+  //     bool isWithinRange = (startOfDay.isBefore(endTime) && endOfDay.isAfter(startTime));
+  //
+  //     // Check if the task's start date is the same as the selected date.
+  //     bool isSameStartDate = DateFormat.yMd().format(startTime) == DateFormat.yMd().format(_selectedDate);
+  //
+  //     // Check if the task's end date is the same as the selected date.
+  //     bool isSameEndDate = DateFormat.yMd().format(endTime) == DateFormat.yMd().format(_selectedDate);
+  //
+  //     // Check if the task is either within the date range or has its start or end date as the selected date.
+  //     bool isWithinDateRange = isWithinRange || isSameStartDate || isSameEndDate;
+  //
+  //     switch (task.repeat) {
+  //       case 'Daily':
+  //         return isWithinDateRange;
+  //       case 'Weekly':
+  //         return (_isRecurringWeeklyTask(task, startTime) && isWithinDateRange);
+  //       case 'Monthly':
+  //         return (_isRecurringMonthlyTask(task, startTime) && isWithinDateRange);
+  //       case 'None':
+  //         return isWithinDateRange;
+  //       default:
+  //         return false;
+  //     }
+  //   }).toList();
+  // }
+
   List<Task> _filterTasks() {
     return _taskController.taskList.where((task) {
       DateTime startTime = DateFormat.yMd().parse(task.date!);
@@ -164,15 +198,29 @@ class _HomePageState extends State<HomePage> {
         case 'Daily':
           return isWithinDateRange;
         case 'Weekly':
-          return (_isRecurringWeeklyTask(task, startTime) && isWithinDateRange);
+        // Include 'Weekly' tasks that are within the date range and occur on the selected weekday.
+          return (_isRecurWeeklyTask(task, _selectedDate) && isWithinDateRange);
         case 'Monthly':
-          return (_isRecurringMonthlyTask(task, startTime) && isWithinDateRange);
+        // Include 'Monthly' tasks that are within the date range and occur on the selected day of the month.
+          return (_isRecurMonthlyTask(task, _selectedDate) && isWithinDateRange);
         case 'None':
           return isWithinDateRange;
         default:
           return false;
       }
     }).toList();
+  }
+
+  bool _isRecurWeeklyTask(Task task, DateTime selectedDate) {
+    DateTime startTime = DateFormat.yMd().parse(task.date!);
+    int weekday = startTime.weekday;
+    return selectedDate.weekday == weekday;
+  }
+
+  bool _isRecurMonthlyTask(Task task, DateTime selectedDate) {
+    DateTime startTime = DateFormat.yMd().parse(task.date!);
+    int dayOfMonth = startTime.day;
+    return selectedDate.day == dayOfMonth;
   }
 
   int _compareTasksByStartTime(Task a, Task b) {
