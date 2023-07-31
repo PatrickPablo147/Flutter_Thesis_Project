@@ -1,14 +1,15 @@
 /*This Class Manage the DatePage*/
 import 'package:flutter/material.dart';
 import 'package:flutter_neat_and_clean_calendar/flutter_neat_and_clean_calendar.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:project1/controllers/navigation_drawer_controller.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/models/add_task_model.dart';
 import 'package:project1/ui/theme/theme.dart';
+import '../../database/db_helper.dart';
 import '../../models/task.dart';
 import '../../services/notification_services.dart';
 import '../../ui/widgets/build_task_widget.dart';
@@ -21,34 +22,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   DateTime _selectedDate = DateTime.now();
   final _taskController = Get.put(TaskController());
   var notifyHelper;
-  bool _checker = true;
 
-
-  final List<NeatCleanCalendarEvent> _eventList = [
-    NeatCleanCalendarEvent('MultiDay Event A',
-        startTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day, 10, 0),
-        endTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day + 2, 12, 0),
-        color: Colors.orange,
-        isMultiDay: true),
-    NeatCleanCalendarEvent('Allday Event B',
-        startTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day - 2, 14, 30),
-        endTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day + 2, 17, 0),
-        color: Colors.pink,
-        isAllDay: true),
-    NeatCleanCalendarEvent('Normal Event D',
-        startTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day, 14, 30),
-        endTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day, 17, 0),
-        color: Colors.indigo),
-  ];
+  List<NeatCleanCalendarEvent> _eventList = [];
 
   @override
   void initState() {
@@ -56,22 +36,56 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadEventsFromDatabase();
+    // Load other necessary data or perform additional tasks here
+  }
+  Future<void> _loadEventsFromDatabase() async {
+    // Initialize the database before querying
+    await DBHelper.initDb();
+
+    // Fetch data from the database
+    List<Map<String, dynamic>> tasksData = await DBHelper.query();
+
+    // Convert the fetched data to NeatCleanCalendarEvent objects and add them to the list
+    List<NeatCleanCalendarEvent> events = tasksData.map((taskData) {
+      Task task = Task.fromJson(taskData);
+      final dateFormat = DateFormat("M/d/yyyy"); // Use the appropriate date format
+      return NeatCleanCalendarEvent(
+        task.title ?? '', // Ensure to handle null values for title
+        startTime: dateFormat.parse(task.date ?? ''),
+        endTime: _getRecurEvent(task.reactive.toString(), task),
+        color: _getCatColor(task.color!.toInt()),
+      );
+    }).toList();
+    // Update the state with the new list of events
+    setState(() {
+      _eventList = events;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: appBar(context, notifyHelper),
+      key: scaffoldKey,
+      drawer: const NavDrawer(),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
           elevation: 0,
-          foregroundColor: Colors.black,
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
-          leading: const Icon(LineAwesomeIcons.bars, size: 30,),
+          leading: IconButton(
+            icon: const Icon(LineAwesomeIcons.bars, size: 30),
+            onPressed: (){
+              scaffoldKey.currentState!.openDrawer();
+            },
+          ),
           title: ListTile(
-            leading: Text('Hello', style: textStyle.copyWith(fontSize: 25, fontWeight: FontWeight.normal),),
+            title: Text('', style: textStyle.copyWith(fontSize: 25, fontWeight: FontWeight.normal),),
           ),
           actions: [
             Padding(
@@ -111,12 +125,12 @@ class _HomePageState extends State<HomePage> {
 
   //Check to recur weekly or monthly
   bool _isRecurringMonthlyTask(Task task, DateTime taskDate) {
-    DateTime currentDate = DateTime(_selectedDate.year, _selectedDate.month, taskDate.day);
-    if (currentDate.isBefore(_selectedDate)) {
-      currentDate = currentDate.add(const Duration(days: 30));
+      DateTime currentDate = DateTime(_selectedDate.year, _selectedDate.month, taskDate.day);
+      if (currentDate.isBefore(_selectedDate)) {
+        currentDate = currentDate.add(const Duration(days: 30));
+      }
+      return currentDate.isAtSameMomentAs(_selectedDate);
     }
-    return currentDate.isAtSameMomentAs(_selectedDate);
-  }
   bool _isRecurringWeeklyTask(Task task, DateTime taskDate) {
     DateTime currentDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
     if (currentDate.isAfter(taskDate)) {
@@ -125,6 +139,74 @@ class _HomePageState extends State<HomePage> {
       currentDate = taskDate.add(Duration(days: weeksToAdd * 7));
     }
     return currentDate.isAtSameMomentAs(_selectedDate);
+  }
+
+  List<Task> _filterTasks() {
+    return _taskController.taskList.where((task) {
+      DateTime startTime = DateFormat.yMd().parse(task.date!);
+      DateTime endTime = _getRecurrence(task.repeat.toString(), task);
+
+      // Check if the selected date is within the date range defined by the start and end dates.
+      DateTime startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+      DateTime endOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, 23, 59, 59);
+      bool isWithinRange = (startOfDay.isBefore(endTime) && endOfDay.isAfter(startTime));
+
+      // Check if the task's start date is the same as the selected date.
+      bool isSameStartDate = DateFormat.yMd().format(startTime) == DateFormat.yMd().format(_selectedDate);
+
+      // Check if the task's end date is the same as the selected date.
+      bool isSameEndDate = DateFormat.yMd().format(endTime) == DateFormat.yMd().format(_selectedDate);
+
+      // Check if the task is either within the date range or has its start or end date as the selected date.
+      bool isWithinDateRange = isWithinRange || isSameStartDate || isSameEndDate;
+
+      switch (task.repeat) {
+        case 'Daily':
+          return isWithinDateRange;
+        case 'Weekly':
+          return (_isRecurringWeeklyTask(task, startTime) && isWithinDateRange);
+        case 'Monthly':
+          return (_isRecurringMonthlyTask(task, startTime) && isWithinDateRange);
+        case 'None':
+          return isWithinDateRange;
+        default:
+          return false;
+      }
+    }).toList();
+  }
+
+  int _compareTasksByStartTime(Task a, Task b) {
+    int completedA = a.isCompleted ?? 0;
+    int completedB = b.isCompleted ?? 0;
+    // Sort by completion status first (0 for not completed, 1 for completed)
+    int completedComparison = completedA.compareTo(completedB);
+
+    // If the completion status is different, return the comparison result.
+    if (completedComparison != 0) {
+      return completedComparison;
+    }
+
+    // If the completion status is the same, sort by start time.
+    DateTime startTimeA = DateFormat.jm().parse(a.startTime.toString());
+    DateTime startTimeB = DateFormat.jm().parse(b.startTime.toString());
+    return startTimeA.compareTo(startTimeB);
+  }
+
+  _showTasks() {
+    return Obx(() {
+      List<Task> filteredTasks = _filterTasks();
+      filteredTasks.sort(_compareTasksByStartTime);
+      return ListView.builder(
+        itemCount: filteredTasks.length,
+        shrinkWrap: true,
+        itemBuilder: (_, index) {
+          Task task = filteredTasks[index];
+          DateTime date = DateFormat.jm().parse(task.startTime.toString());
+          _getNotify(date, task);
+          return buildTaskTileWidget(context, task, index, _taskController);
+        },
+      );
+    });
   }
 
   _getNotify(date, task) {
@@ -136,8 +218,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /*Custom Functions*/
-
   _calendarBar() {
     _taskController.getTasks();
     return Calendar(
@@ -145,22 +225,10 @@ class _HomePageState extends State<HomePage> {
       weekDays: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       eventsList: _eventList,
       eventListBuilder: (context, day) {
+        _taskController.getTasks();
         return Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              color: Colors.grey.withOpacity(0.2),
-              height: _checker ? 375 : 575,
-              //constraints: BoxConstraints(maxHeight: _checker ? 355 : 555),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: _showTasks(),
-              ),
-            ),
-          ),
+          child: _showTasks(),
         );
-      },
-      onExpandStateChanged: (check) {
-        _checker = check;
       },
       isExpandable: true,
       isExpanded: true,
@@ -181,77 +249,75 @@ class _HomePageState extends State<HomePage> {
       expandableDateFormat: 'MMMM dd, yyyy',
       datePickerType: DatePickerType.date,
       displayMonthTextStyle: GoogleFonts.poppins(
-        textStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 20
-        )
+          textStyle: const TextStyle(
+              fontSize: 20
+          )
       ),
       bottomBarTextStyle: GoogleFonts.poppins(
-        color: Colors.grey,
-        fontSize: 14
+          color: Colors.grey,
+          fontSize: 14
       ),
       dayOfWeekStyle: GoogleFonts.poppins(
         textStyle: const TextStyle(
-            color: Colors.black, fontWeight: FontWeight.normal, fontSize: 11
+            fontWeight: FontWeight.normal, fontSize: 11
         ),
       ),
     );
   }
 
-  //Show the created Task
-  _showTasks(){
-    return Obx((){
-      return ListView.builder(
-          itemCount: _taskController.taskList.length,
-          shrinkWrap: true,
-          itemBuilder: (_, index){
-            Task task = _taskController.taskList[index];
-            //print(task.toJson());
-            DateTime dateFormatted = DateFormat.yMd().parse(task.date!);
-            //Condition to show the created Task
-            if (dateFormatted.isBefore(_selectedDate)) {
-              switch (task.repeat){
-                case 'Daily': {
-                  DateTime date = DateFormat.jm().parse(task.startTime.toString());
-                  _getNotify(date, task);
-                  return buildTaskTileWidget(context, task, index, _taskController);
-                }
-                case 'Weekly': {
-                  if (_isRecurringWeeklyTask(task, dateFormatted)) {
-                    DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
-                    _getNotify(date, task);
-                    return buildTaskTileWidget(context, task, index, _taskController);
-                  }
-                } break;
-                case 'Monthly': {
-                  if (_isRecurringMonthlyTask(task, dateFormatted)) {
-                    DateTime date = DateFormat("hh:mm a").parse(task.startTime.toString());
-                    _getNotify(date, task);
-                    return buildTaskTileWidget(context, task, index, _taskController);
-                  }
-                }break;
-                case 'None': {
-                  if(task.date == DateFormat.yMd().format(_selectedDate)){
-                    DateTime date = DateFormat.jm().parse(task.startTime.toString());
-                    _getNotify(date, task);
-                    return buildTaskTileWidget(context, task, index, _taskController);
-                  }
-                }break;
-                default: {
-                  return Container();
-                }
-              }
-            }
-            if(task.date == DateFormat.yMd().format(_selectedDate)){
-              DateTime date = DateFormat.jm().parse(task.startTime.toString());
-              _getNotify(date, task);
-              return buildTaskTileWidget(context, task, index, _taskController);
-            }
-            else {
-              return Container();
-            }
-          }
-      );
-    });
+
+  _getRecurrence(String recur, Task task) {
+    switch(recur) {
+      case 'None' : return DateFormat.yMd().parse(task.date!);
+      case 'Daily' : return DateFormat.yMd().parse(task.date!).add(Duration(days: task.remind!));
+      case 'Weekly' : return DateFormat.yMd().parse(task.date!).add(Duration(days: 7 * task.remind!));
+      case 'Monthly' :
+        DateTime startDate = DateFormat.yMd().parse(task.date!);
+
+        // Calculate the next month's date based on the recurrence
+        DateTime endDate = DateTime(startDate.year, startDate.month + task.remind!, startDate.day);
+
+        // If the day of the startDate is greater than the last day of the month,
+        // adjust the end date to the last day of the month
+        int lastDayOfMonth = DateTime(endDate.year, endDate.month + 1, 0).day;
+        if (endDate.day > lastDayOfMonth) {
+          endDate = DateTime(endDate.year, endDate.month, lastDayOfMonth);
+        }
+        return endDate;
+    }
+  }
+  DateTime _getRecurEvent(String recur, Task task) {
+    DateTime startDate = DateFormat.yMd().parse(task.date!);
+
+    switch (recur) {
+      case 'None':
+        return startDate;
+      case 'Daily':
+        return startDate.add(Duration(days: task.remind!));
+      case 'Weekly':
+        return startDate.add(Duration(days: 7 * task.remind!));
+      case 'Monthly':
+        DateTime endDate = DateTime(startDate.year, startDate.month + task.remind!, startDate.day);
+
+        // If the day of the startDate is greater than the last day of the month,
+        // adjust the end date to the last day of the month
+        int lastDayOfMonth = DateTime(endDate.year, endDate.month + 1, 0).day;
+        if (endDate.day > lastDayOfMonth) {
+          endDate = DateTime(endDate.year, endDate.month, lastDayOfMonth);
+        }
+        return endDate;
+      default:
+        return startDate; // Default case, handle 'None' or any other unknown recurrence pattern
+    }
+  }
+
+  _getCatColor(int no) {
+    switch(no) {
+      case 0: return Colors.yellow.shade800;
+      case 1: return Colors.pinkAccent;
+      case 2: return Colors.blue.shade400;
+      case 3: return Colors.green.shade700;
+      case 4: return Colors.black54;
+    }
   }
 }

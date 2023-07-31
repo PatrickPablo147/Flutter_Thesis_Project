@@ -58,10 +58,9 @@ TextStyle get titleStyle {
 
 TextStyle get subTitleStyle {
   return GoogleFonts.poppins (
-      textStyle: TextStyle(
+      textStyle: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w400,
-          color: Colors.black
       )
   );
 }

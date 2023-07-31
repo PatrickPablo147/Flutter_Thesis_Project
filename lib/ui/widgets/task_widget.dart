@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -15,12 +16,12 @@ class TaskWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 5, top: 10),
       child: Container(
         padding: const EdgeInsets.only(left: 5, top: 10, right: 10, bottom: 10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
+            color: Get.isDarkMode ? Colors.black54 : Colors.white,
             //color: const Color(0xFFc3d7ee),
             boxShadow: const [
               BoxShadow(
@@ -37,8 +38,6 @@ class TaskWidget extends StatelessWidget {
               height: 100, width: 10, 
               decoration: BoxDecoration(
                 color: task!.isCompleted == 1 ? Colors.green : _timeComparison(task!.startTime!) ? Colors.red : Colors.blue,
-                //color: _getCatColor(task!.color??0),
-                //color: (DateTime.parse(task!.startTime!).isBefore(DateTime.now())) ? Colors.red : Colors.blue,
                 borderRadius: BorderRadius.circular(20)
               ),
             ),
@@ -66,7 +65,6 @@ class TaskWidget extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
                                     fontSize: 20,
-                                    color: Colors.black,
                                     fontWeight: FontWeight.normal
                                 ),
                               )
@@ -81,16 +79,14 @@ class TaskWidget extends StatelessWidget {
                                 const SizedBox(width: 2),
                                 Text(
                                   "${task!.startTime}", // - ${task!.endTime}",
-                                  style: const TextStyle(
-                                      color: Colors.black
-                                  ),
+                                  style: textStyle,
                                 )
                               ],
                             ),
                           ],
                         ),
                         const Gap(5),
-                        Text(task?.note??"", style: const TextStyle(color: Colors.black87),)
+                        Text(task?.note??"", style: textStyle,)
                       ],
                     ),
                   ),
@@ -114,7 +110,7 @@ class TaskWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                DateFormat('M:d:y').format(DateFormat.yMd().parse(task!.date!)),
+                                DateFormat('MMM d, y').format(DateFormat.yMd().parse(task!.date!)),
                                 style: textStyle
                               ),
                               const Text('--'),
@@ -148,13 +144,29 @@ class TaskWidget extends StatelessWidget {
   }
 
   _getRecurrence(String recur) {
-    switch(recur) {
-      case 'None' : return DateFormat('M:d:y').format(DateFormat.yMd().parse(task!.date!));
-      case 'Daily' : return DateFormat('M:d:y').format(DateFormat.yMd().parse(task!.date!).add(Duration(days: task!.remind!)));
-      case 'Weekly' : return DateFormat('M:d:y').format(DateFormat.yMd().parse(task!.date!).add(Duration(days: task!.remind! * 7)));
-      case 'Monthly' : return DateFormat('M:d:y').format(DateFormat.yMd().parse(task!.date!).add(Duration(days: task!.remind! * 30)));
+    switch (recur) {
+      case 'None':
+        return DateFormat('MMM d, y').format(DateFormat.yMd().parse(task!.date!));
+      case 'Daily':
+        return DateFormat('MMM d, y').format(DateFormat.yMd().parse(task!.date!).add(Duration(days: task!.remind!)));
+      case 'Weekly':
+        return DateFormat('MMM d, y').format(DateFormat.yMd().parse(task!.date!).add(Duration(days: task!.remind! * 7)));
+      case 'Monthly':
+        DateTime startDate = DateFormat.yMd().parse(task!.date!);
+
+        // Calculate the next month's date based on the recurrence
+        DateTime endDate = DateTime(startDate.year, startDate.month + task!.remind!, startDate.day);
+
+        // Manually adjust the month and year if necessary
+        if (endDate.day != startDate.day) {
+          endDate = DateTime(endDate.year, endDate.month, 0); // Set to the last day of the previous month
+        }
+
+        return DateFormat('MMM d, y').format(endDate);
     }
   }
+
+
 
   _timeComparison(String task) {
     DateTime now = DateTime.now();

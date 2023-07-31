@@ -28,6 +28,8 @@ dependencies:
   numberpicker: ^2.1.1
   calendar_timeline: ^1.1.2
   flutter_neat_and_clean_calendar:
+  #dialog message
+  fluttertoast: ^8.2.2
   #Notification utils
   flutter_local_notifications:
   flutter_native_timezone:
@@ -55,5 +57,4 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/icons/
 

@@ -2,14 +2,12 @@ import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:project1/models/task.dart';
 import 'package:project1/pages/navpages/schedule_page.dart';
-
 import '../../controllers/task_controller.dart';
 import '../theme/theme.dart';
 
@@ -40,7 +38,7 @@ class _RescheduleEventState extends State<RescheduleEvent> {
           automaticallyImplyLeading: false,
           elevation: 0,
           leading: GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())),
+              onTap: () => Get.back(),
               child: const Icon(LineAwesomeIcons.angle_left)
           ),
           actions: [
@@ -59,7 +57,8 @@ class _RescheduleEventState extends State<RescheduleEvent> {
                     ),
                   ),
                   onPressed: () {
-                    //_taskController.changeDateTime(widget.task!.id!, DateFormat.yMd().format(selectedDate), _startTime);
+                    _taskController.changeDateTime(widget.task.id!, DateFormat.yMd().format(selectedDate), ('$hour:${minute.toString().padLeft(2, '0')} $timeFormat'));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
                   },
                   child: Text('Save', style: textStyle.copyWith(color: Colors.white),),
                 ),

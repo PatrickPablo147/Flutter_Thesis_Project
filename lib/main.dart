@@ -4,12 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:project1/database/db_helper.dart';
-import 'package:project1/pages/login/sign_in.dart';
+import 'package:project1/pages/navpages/schedule_page.dart';
 import 'package:project1/pages/welcome/bloc/welcome_bloc.dart';
-import 'package:project1/pages/welcome/welcome.dart';
 import 'package:project1/services/theme_services.dart';
 import 'package:project1/ui/theme/theme.dart';
-import 'controllers/navbar_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +30,7 @@ class MyApp extends StatelessWidget {
             theme: Themes.light,
             darkTheme: Themes.dark,
             themeMode: ThemeService().theme,
-            home: const SignIn(),
+            home: const HomePage(),
             // routes: {
             //   "signIn":(context) => const SignIn()
             // },

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:project1/controllers/task_controller.dart';
+import 'package:project1/pages/navpages/schedule_page.dart';
 import 'package:project1/ui/theme/theme.dart';
 import 'task.dart';
 
@@ -49,7 +50,6 @@ class _AddTaskModelState extends State<AddTaskModel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
@@ -77,6 +77,8 @@ class _AddTaskModelState extends State<AddTaskModel> {
                   ),
                   onPressed: () {
                     _addTaskToDb();
+                    _taskController.getTasks();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
                     _taskController.getTasks();
                   },
                   child: Text('Save', style: textStyle.copyWith(color: Colors.white),),
@@ -109,7 +111,6 @@ class _AddTaskModelState extends State<AddTaskModel> {
                                   textStyle: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.normal,
-                                      color: Colors.black,
                                     letterSpacing: 5
                                   ),
                               ),
@@ -137,7 +138,6 @@ class _AddTaskModelState extends State<AddTaskModel> {
                               height: 75, width: 75,
                               child: Image(image: AssetImage("assets/images/${_getTitleIcon(indexValue)}.png"),)
                             ),
-                            //const Icon(LineAwesomeIcons.birthday_cake, color: Colors.red, size: 80,),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -170,7 +170,6 @@ class _AddTaskModelState extends State<AddTaskModel> {
                     ],
                   ),
                 ),
-
                 //Input controls
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,22 +199,17 @@ class _AddTaskModelState extends State<AddTaskModel> {
                     _addTimeBar(),
 
                     const Gap(10),
-                    Text('Repeat', style: subTitleStyle),
+                    Text('Remind', style: subTitleStyle),
                     const Gap(3),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all()
                       ),
                       child: DropdownButtonFormField<String>(
                         icon: const Visibility(visible: false, child: Icon(Icons.keyboard_arrow_down),),
-                        style: const TextStyle(
-                            color: Colors.black
-                        ),
                         decoration: InputDecoration(
-                          fillColor: Colors.white,
                           suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey,),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -240,7 +234,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
 
 
                     const Gap(10),
-                    Text('Remind', style: subTitleStyle),
+                    Text('Repeat', style: subTitleStyle),
                     const Gap(3),
                     Container(
                       padding: const EdgeInsets.only(left: 20, right: 5, top: 5, bottom: 5),
@@ -364,10 +358,7 @@ class _AddTaskModelState extends State<AddTaskModel> {
         )
     );
     //print("My id is " "$value");
-    Get.back();
   }
-
-
 
   _addDateBar() {
     return CalendarTimeline(

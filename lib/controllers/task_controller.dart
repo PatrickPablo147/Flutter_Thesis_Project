@@ -31,8 +31,8 @@ class TaskController extends GetxController{
     getTasks();
   }
 
-  void changeDateTime(int id, String date, String startTime, String endTime) async {
-    await DBHelper.updateDateTime(date, startTime, endTime, id);
+  void changeDateTime(int id, String date, String startTime) async {
+    await DBHelper.updateDateTime(date, startTime, id);
     getTasks();
   }
 

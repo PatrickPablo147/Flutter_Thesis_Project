@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:project1/controllers/navbar_controller.dart';
 import 'package:project1/pages/login/sing_up.dart';
-import 'package:project1/pages/navpages/home_page.dart';
 import 'package:project1/pages/navpages/schedule_page.dart';
 import 'package:project1/ui/widgets/sign_in_widget.dart';
 

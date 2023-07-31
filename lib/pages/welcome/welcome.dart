@@ -1,10 +1,7 @@
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:project1/controllers/navbar_controller.dart';
-import 'package:project1/pages/login/sign_in.dart';
 import 'package:project1/pages/welcome/bloc/welcome_bloc.dart';
 import 'package:project1/pages/welcome/bloc/welcome_events.dart';
 

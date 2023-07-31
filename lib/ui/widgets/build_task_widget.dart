@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:project1/controllers/task_controller.dart';
 import 'package:project1/models/task.dart';
@@ -7,6 +8,7 @@ import 'package:project1/ui/theme/theme.dart';
 import 'package:project1/ui/widgets/reschedule_widget.dart';
 import 'package:project1/ui/widgets/task_info.dart';
 import 'package:project1/ui/widgets/task_widget.dart';
+
 
 Widget buildTaskTileWidget(BuildContext context, Task task, int index, TaskController taskController) {
   return AnimationConfiguration.staggeredList(
@@ -80,7 +82,6 @@ _showBottomSheet(BuildContext context, Task task, TaskController taskController)
               lable: "Task Completed",
               onTap: (){
                 //taskController.delete(task);
-                print('task c: $task');
                 taskController.markTaskCompleted(task.id!);
                 Get.back();
               },
@@ -90,13 +91,10 @@ _showBottomSheet(BuildContext context, Task task, TaskController taskController)
             _bottomSheetButton(
               lable: "Reschedule Task",
               onTap: () {
-                print('task value: $task');
                 Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => RescheduleEvent(task: task,))
                 );
-                //taskController.delete(task);
-                //Get.back();
               },
               clr: Colors.red[300]!,
               context: context,
@@ -150,6 +148,16 @@ _bottomSheetButton({required String lable,
       ),
     ),
   );
+}
+
+_getTitleIcon(String title) {
+  switch (title) {
+    case 'General': return 'general';
+    case 'Celebration': return 'celebrate';
+    case 'Exercise': return 'exercise';
+    case 'Study': return 'study';
+    case 'Meeting': return 'meeting';
+  }
 }
 
 Future openDialog(BuildContext context, Task task, TaskController taskController) => showDialog(
